@@ -24,6 +24,8 @@ def extract_floor(floor_info: str) -> int:
         floor_info (str): 층수 정보
     """
     # TODO
+    f = floor_info.split()[0]
+    return int(f) if f.isdigit() else 0
 
 
 def floor_extractor(df: pd.DataFrame, col: str) -> pd.DataFrame:
@@ -50,13 +52,23 @@ preprocess_pipeline = ColumnTransformer(
     transformers=[
         # TODO,
         (
+            "sqrt",
+            FunctionTransformer(lambda x: x**0.5), #FunctionTransformer 역할: 일반 함수를 fit/transform 함수로 만든다.
+            ["size"],
+         ),
+        (
             "floor_extractor",
             FunctionTransformer(floor_extractor, kw_args={"col": "floor"}),
             ["floor"],
         ),
+        (
+            'target_encoder',
+            TargetEncoder(),#그래서 여기선 안쓴다.
+            CAT_FEATURES,
+        )
         # TODO,
     ],
-    remainder="passthrough",
+    remainder="passthrough", #처리하지 않은
     verbose_feature_names_out=False,
 )
-preprocess_pipeline.set_output(transform="pandas")
+preprocess_pipeline.set_output(transform="pandas")#default가 np.array -> 컬럼명이 사라짐

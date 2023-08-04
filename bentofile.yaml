@@ -1,0 +1,5 @@
+service: "service.py:scv"
+include:
+  ~ "service.py"
+python:
+  requiremets_txt: "./requirements.txt"
